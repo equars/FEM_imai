@@ -1,0 +1,21 @@
+# --------make file------
+SHELL = /bin/bash
+# --------setting--------
+CXX = g++
+TARGET = FEM.exe
+CXXFLAGS =
+SRCS = main.cpp matrix.cpp material.cpp util.cpp core.cpp variable.cpp solve.cpp
+OBJS := $(SRCS:.cpp=.o) #SRCS .cpp -> .o
+
+# --------compile--------
+$(TARGET): $(OBJS)
+	$(CXX) -o $@ $(OBJS)
+
+%.o:%.cpp
+	$(CXX) $(SRCS) -c $<
+
+# --------clean----------
+clean:
+	@echo 'clean-all : delete all object files.' 
+clean-all:
+	rm -f $(TARGET) $(OBJS)

@@ -1,0 +1,8 @@
+Number of nodes = 4
+! (required) this must be the first line. "!" is the symmbolic of comment.
+
+!data written like this -> "nodenum" "x" "y"
+1 0   0
+2 1.0 0
+3 0   1.0
+4 1.0 1.0

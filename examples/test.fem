@@ -1,0 +1,12 @@
+!test script
+!this is the comment after "!" char.
+
+set variable in_node node.dat
+set variable in_elem elem.dat
+
+
+!read node $(in_node) !read node data file.
+!fix 1 pa
+!fix 3 pxs
+!fix 2 py
+/SOLU
