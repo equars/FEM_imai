@@ -16,6 +16,9 @@ $(TARGET): $(OBJS)
 
 # --------clean----------
 clean:
-	@echo 'clean-all : delete all object files.' 
+	@echo 'clean-all : uninstall.'
+	@echo 'clean-OBJ : delete object files.' 
 clean-all:
 	rm -f $(TARGET) $(OBJS)
+clean-OBJ:
+	rm -f $(OBJS)

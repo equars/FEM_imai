@@ -1,5 +1,5 @@
 //=================================================
-//the class is defined as the shape of the material 
+//the class is defined as the shape of the material
 //=================================================
 
 #ifndef MATER_H
@@ -28,12 +28,16 @@ class Material{
         //data
         vector< vector<int> > elements ; //elements
         vector<Node> nodes ; //nodes
+        vector< double > u ; //henni
+        vector< double > stress ; //stress
         Matrix D ; //Dmatrix
         Matrix K ; //Kmatrix
+        vector< double > force ;
         double t ; //thickness of material
         vector< int > fixall ; //Condition of constraint
         vector< int > fixx ;
-        vector< int > fixy ; 
+        vector< int > fixy ;
+        vector< int > fixz ;
 
         //methods
         int Make_K() ; //Make K matrix

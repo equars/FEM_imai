@@ -72,8 +72,8 @@ int readscript(string filename, string order){
     //----define value----
     char script_line_c[31] ;
     string script_line ;
-    string str ; //get line from script file 
-    vector<string> script_line_splited ;  
+    string str ; //get line from script file
+    vector<string> script_line_splited ;
     int commandargnum = 0 ; //number of command argment.
     int end_flag = 0 ; //break while
 
@@ -94,7 +94,7 @@ int readscript(string filename, string order){
                 script_line = order ;
                 end_flag = 1 ;
             }
-            
+
             if (script_line != "")
             {
                 //----Main process zone start !----
@@ -127,12 +127,12 @@ int readscript(string filename, string order){
                             vars_str.elem.push_back(var) ;
                         }
                     }
-                    
+
                 }else if (script_line_splited[0] == "unit") //to define unit set.
                 {
                     if (commandargnum == 2)
                     {
-                        if (script_line_splited[1] == "metal")
+                        if (script_line_splited[1] == "metal") //L:[m] T:[s] M:[kg]
                         {
                             //no proccess
                         }
@@ -179,17 +179,55 @@ int readscript(string filename, string order){
                             }
                         }if (script_line_splited[1] == "element")
                         {
-
+                            int stat ;
+                            stat = read_elem(obj, script_line_splited[2]) ;
+                            if (stat == 0)
+                            {
+                                message = "All elements are normally read." ;
+                            }else if(stat == -1){
+                                commandstate_flag = __LINE__ ;
+                                message = "Error : could not open " + script_line_splited[2] + "." ;
+                            }else
+                            {
+                                commandstate_flag = __LINE__ ;
+                                message = "Error : Some abnormality is on line " + inttostring(stat) + " in " + script_line_splited[2] + "." ;
+                            }
                         }
                     }else
                     {
                         commandstate_flag = __LINE__ ;
                         message = "Error : Could not read data file." ;
                     }
-                    
+
+                }else if (script_line_splited[0] == "force")
+                {
+                    if (commandargnum == 5) {
+                        if (script_line_splited[1] == "node") {
+                            int nodenum = stringtoint(script_line_splited[2]) ;
+                            int rownum = -1 ;
+
+                            if (script_line_splited[3] == "x") {
+                                rownum = 0 ;
+                            }else if (script_line_splited[3] == "y") {
+                                rownum = 1 ;
+                            }else if(script_line_splited[3] == "z") {
+                                rownum = 2 ;
+                            }else{
+                                commandstate_flag = __LINE__ ;
+                                message = "Error : You may miss set about force." ;
+                            }
+
+                            double force = stringtodouble(script_line_splited[4]) ;
+
+                            obj.force[(nodenum-1)*dim+rownum] = force ;
+                        }
+                    }else{
+                        commandstate_flag = __LINE__ ;
+                        message = "Error : You may miss set about force." ;
+                    }
                 }else if (script_line_splited[0] == "solve")
                 {
-                    solve(obj,2) ;
+                    solve(obj,dim) ;
                 }else if (script_line_splited[0] == "write")
                 {
                     if (commandargnum == 3)
@@ -204,7 +242,7 @@ int readscript(string filename, string order){
                             }
                             while(getline(ifs_dat, str))
                             {
-    
+
                             }
                             */
                             cout << "node" ;
@@ -257,7 +295,7 @@ int readscript(string filename, string order){
                 {
                     cout << "Program will be terminated normally.\n" ;
                     end_flag = 1 ;
-                    
+
                 }else
                 {
                     commandstate_flag = __LINE__ ;

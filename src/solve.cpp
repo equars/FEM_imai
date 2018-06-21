@@ -18,7 +18,7 @@ int solve(Material &obj, int dim){
     obj.K.Reserve(dim*node_num,dim*node_num) ; //reserve K matrix
 
     if (elem_type == 3 && dim == 2) //triangle nodes(plane)
-    { 
+    {
         for (int i = 0; i < elem_num; i++)
         {
             //make B and K matrix for each elements(init)
@@ -30,12 +30,12 @@ int solve(Material &obj, int dim){
             y2 = obj.nodes[ obj.elements[i][1] ].coord[1] ;
             x3 = obj.nodes[ obj.elements[i][2] ].coord[0] ;
             x3 = obj.nodes[ obj.elements[i][2] ].coord[1] ;
-            
+
             //determinant of A
             double deta = x2*y3+x1*y2+x3*y1 - (x1*y3+x2*y1+x3*y2) ;
-            
-            //make B matrix 
-            B[0][0]= (y2-y3)/deta ; 
+
+            //make B matrix
+            B[0][0]= (y2-y3)/deta ;
             B[0][2]= (y3-y1)/deta ;
             B[0][4]= (y1-y2)/deta ;
             B[1][1]= (x3-x2)/deta ;
@@ -49,7 +49,7 @@ int solve(Material &obj, int dim){
             B[2][5]= (y1-y2)/deta ;
 
             //B^T *D*B *thickness * detA /2
-            Bt = B ; 
+            Bt = B ;
             Bt.Transpose() ;
             Km = Bt * obj.D ;
             Km = Km * B ;
@@ -64,7 +64,20 @@ int solve(Material &obj, int dim){
             //merge K_m matrix to K(not yet)
             merge_Kmatrix(obj.K, Km) ;
             //merge K_m to K(test version) (delete if maerge_Kmatrix is deploy)
-            
+
+        }
+        //boundary conditions
+        for (int i = 0; i < obj.K[0].size(); i++) {
+
+        }
+
+        //solve
+        obj.K.Inverse() ;
+        for (int i = 0; i < obj.K[0].size(); i++) {
+            for (int j = 0; j < obj.K[0].size(); j++) {
+                double kval = obj.K[i][j] ;
+                obj.u[i] += kval * obj.force[j] ;
+            }
         }
     }
     return 0 ;

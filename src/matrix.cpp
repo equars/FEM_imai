@@ -81,7 +81,7 @@ int Matrix::Inverse(){
         for(int j=i;j<length_column_exp;j++)
         {
             L[i][j] = L[i][j]/pivot_L ; //row normalize for head is 1
-        } 
+        }
         for(int j=i+1;j<length_row;j++)
         {
             int head_L = L[j][i] ; //head column of this term about matrix L
@@ -116,7 +116,7 @@ int Matrix::Reserve(int size_row, int size_column){
     v.cell.reserve(size_row) ;
     zero_line.reserve(size_column) ;
     this->length_row = size_row ;
-    this->length_column = size_column ; 
+    this->length_column = size_column ;
     for (int i = 0; i < size_column; i++)
     {
         zero_line.push_back(0) ;
@@ -155,7 +155,7 @@ int Matrix::Lu(Matrix &L, Matrix &U){
     }
     L.Reserve(m,m) ;
     U.Reserve(m,m) ;
-    
+
     lu.cell = this->cell ; //init lu
     for (int i = 0; i < m; i++)
     {
@@ -249,7 +249,7 @@ int Matrix::Optimize(){
         v = this->cell ;
         for (int i = 0; i < length_row; i++)
         {
-            vector< double > data_line ; 
+            vector< double > data_line ;
             for (int j = 0; j < i; j++)
             {
                 data_line.push_back(v[i][j]) ;
@@ -258,6 +258,7 @@ int Matrix::Optimize(){
         }
         this-> cell = w ;
     }
+    return 0 ;
 }
 
 
@@ -299,7 +300,7 @@ Matrix Matrix::operator-(const Matrix& x){
     v.length_row = length_row ;
     v.length_column = length_column ;
     return v ;
-} 
+}
 
 Matrix Matrix::operator*(const Matrix& x){
     Matrix v ;
@@ -401,4 +402,5 @@ double cofex(const Matrix v){
         }
         return r ;
     }
+    return -1;
 }

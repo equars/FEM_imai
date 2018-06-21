@@ -1,12 +1,17 @@
 !test script
-!this is the comment after "!" char.
+!this is the comment. this become comment after "!" char.
 
-set variable in_node node.dat
-set variable in_elem elem.dat
+read node node.dat
+read element elem.dat
 
+force node 2 x 5000
+force node 4 x 5000
 
-!read node $(in_node) !read node data file.
-!fix 1 pa
-!fix 3 pxs
-!fix 2 py
+fix 1 pa !fix to all direction
+!fix 3 pxs !fix line3 to y direction(cannot use this command now...)
+fix 2 px  !fix node to y direction(x axis is free. x and z are free if we consider 3D. )
 /SOLU
+
+solve
+
+dump material all
