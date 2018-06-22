@@ -64,7 +64,7 @@ int solve(Material &obj, int dim){
             //merge K_m matrix to K(not yet)
             merge_Kmatrix(obj.K, Km) ;
             //merge K_m to K(test version) (delete if maerge_Kmatrix is deploy)
-
+            
         }
         //boundary conditions
         for (int i = 0; i < obj.K[0].size(); i++) {

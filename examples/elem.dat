@@ -1,4 +1,4 @@
-Number of elems = 2
+Number of elements = 2
 ! (required) this must be the first line. "!" is the symmbolic of comment.
 
 !data written like this -> "elemnum" "node1" "node2" "node3"...

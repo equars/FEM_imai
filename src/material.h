@@ -26,8 +26,8 @@ class Node ;
 class Material{
     public:
         //data
-        vector< vector<int> > elements ; //elements
-        vector<Node> nodes ; //nodes
+        vector< vector<int> > elements ; //elements. index implay node number. values mean node numbaers.
+        vector<Node> nodes ; //nodes. index implay node number. and Node class values means coordinations.
         vector< double > u ; //henni
         vector< double > stress ; //stress
         Matrix D ; //Dmatrix
