@@ -34,10 +34,11 @@ class Material{
         Matrix K ; //Kmatrix
         vector< double > force ;
         double t ; //thickness of material
-        vector< int > fixall ; //Condition of constraint
         vector< int > fixx ;
         vector< int > fixy ;
         vector< int > fixz ;
+
+        int unit ; //unit flag. 0 as metal
 
         //methods
         int Make_K() ; //Make K matrix
@@ -45,7 +46,9 @@ class Material{
         //initialize constructor
         Material(){
             int s = (dim-1)*3 ;
+            t=1 ; //default thickness
             D.Reserve(s,s) ;
+            unit = 0 ;
         } ;
 };
 

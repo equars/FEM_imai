@@ -156,7 +156,7 @@ int Matrix::Lu(Matrix &L, Matrix &U){
     L.Reserve(m,m) ;
     U.Reserve(m,m) ;
 
-    lu.cell = this->cell ; //init lu
+    lu = *this ; //init lu
     for (int i = 0; i < m; i++)
     {
         U.cell[i][i] = 1 ;

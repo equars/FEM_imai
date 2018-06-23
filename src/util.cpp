@@ -48,15 +48,17 @@ int read_node(Material &obj, string filename){
                 int node_len = stringtoint(script_line_splited[4]) ;
 
                 //allocate arrays.
-                obj.nodes.reserve(node_len) ;
+                obj.nodes.reserve(node_len+1) ;
                 obj.force.reserve(node_len*dim) ;
                 obj.K.Reserve(node_len*dim, node_len*dim) ;
-                for (int i = 0; i < node_len; i++)
+                for (int i = 0; i < node_len+1; i++)
                 {
                     Node n ;
                     obj.nodes.push_back(n) ;
-                    for (int i = 0; i < dim; i++) {
-                        obj.force.push_back(0) ;
+                    if(i != node_len){
+                        for (int i = 0; i < dim; i++) {
+                            obj.force.push_back(0) ;
+                        }
                     }
                 }
             }else if(commandargnum > 2)
@@ -89,7 +91,7 @@ int read_elem(Material &obj, string filename){
         //----define value----
         int comment_flag = -1 ;
         vector<string> script_line_splited ;
-        int commandargnum = 0 ;
+        int dataargnum = 0 ;
 
         script_line_num += 1 ;
         comment_flag = str.find("!") ;
@@ -100,8 +102,8 @@ int read_elem(Material &obj, string filename){
         if (str != "")
         {
             script_line_splited = data_split(str,' ') ;
-            commandargnum = script_line_splited.size() ;
-            if (commandargnum >= 5 && script_line_splited[0] == "Number" && script_line_splited[1] == "of" && script_line_splited[2] == "elements")
+            dataargnum = script_line_splited.size() ;
+            if (dataargnum >= 5 && script_line_splited[0] == "Number" && script_line_splited[1] == "of" && script_line_splited[2] == "elements")
             {
                 int elem_len = stringtoint(script_line_splited[4]) ;
                 obj.elements.reserve(elem_len) ;
@@ -111,10 +113,10 @@ int read_elem(Material &obj, string filename){
                 {
                     obj.elements.push_back(init) ;
                 }
-            }else if(commandargnum > 2)
+            }else if(dataargnum > 2)
             {
                 int index = stringtoint(script_line_splited[0]) ;
-                for (int i = 0; i < commandargnum-1; i++)
+                for (int i = 0; i < dataargnum-1; i++)
                 {
                     if (i==0) {
                         obj.elements[index][0]=stringtoint(script_line_splited[i+1]) ;
@@ -159,6 +161,8 @@ double evalu(string &equ , Vars &vars){
 int dump(Material &obj, string order){
     cout << "====DUMP ABOUT MATERIAL DATA.====\n" ;
     if (order == "all") {
+        cout << "dump data of D matrix ->\n" ;
+        obj.D.Show() ;
         cout << "dump data of nodes ->\nnode num, [coordinations]\n" ;
         for (int i = 0; i < obj.nodes.size(); i++) {
             cout << i << " " ;
@@ -168,9 +172,9 @@ int dump(Material &obj, string order){
             cout << "\n" ;
         }
         cout << "dump data of elements ->\nelement num, [nodes]\n" ;
-        for (int i = 0; i < obj.elements.size(); i++) {
+        for (int i = 1; i < obj.elements.size(); i++) {
             cout << i << " " ;
-            for (int j = 0; j < obj.elements[0].size(); j++) {
+            for (int j = 0; j < obj.elements[1].size(); j++) {
                 cout << obj.elements[i][j] << " " ;
             }
             cout << "\n" ;

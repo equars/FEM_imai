@@ -12,10 +12,11 @@
 #include <vector>
 
 #include "matrix.h"
+#include "material.h"
 
 using namespace std ;
 
 //----function prototype----
-int getDmatrix(Matrix &D, int dim, double elastic_constant, double poisson_ratio) ;
-int merge_Kmatrix(Matrix &K, Matrix &Km) ;
+int getDmatrix(Material &obj, int dim, double elastic_constant, double poisson_ratio) ;
+int merge_Kmatrix(Material &obj, Matrix &Km) ;
 #endif

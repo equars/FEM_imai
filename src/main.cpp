@@ -101,205 +101,220 @@ int readscript(string filename, string order){
                 //----more than 1 words in a terminal line----
                 script_line_splited = data_split(script_line, ' ') ;
                 commandargnum = script_line_splited.size() ;
-                if (script_line_splited[0] == "load") //----below this, write command name and its process and error or output message in each "if"----
-                {
-                    if (commandargnum == 2)
+                if (commandargnum > 0) {
+                    if (script_line_splited[0] == "load") //----below this, write command name and its process and error or output message in each "if"----
                     {
-                        readscript(script_line_splited[1],"0") ;
-                        break ;
-                    }else
-                    {
-                        commandstate_flag = __LINE__ ;
-                        message = "Error : in command 'load'. command with an arguments(file name)?" ;
-                    }
-                }if (script_line_splited[0] == "set")
-                {
-                    if (commandargnum >= 3)
-                    {
-                        if (script_line_splited[1] == "variable")
+                        if (commandargnum == 2)
                         {
-                            Variable var ;
-                            var.name = script_line_splited[2] ;
-                            if (commandargnum == 4)
-                            {
-                                var.value = script_line_splited[3] ;
-                            }
-                            vars_str.elem.push_back(var) ;
-                        }
-                    }
-
-                }else if (script_line_splited[0] == "unit") //to define unit set.
-                {
-                    if (commandargnum == 2)
-                    {
-                        if (script_line_splited[1] == "metal") //L:[m] T:[s] M:[kg]
-                        {
-                            //no proccess
-                        }
-                    }else
-                    {
-                        commandstate_flag = __LINE__ ;
-                        message = "Error : you should set parameter of unit command." ;
-                    }
-                }else if (script_line_splited[0] == "mp") //to define material parameter
-                {
-                    if (commandargnum == 3)
-                    {
-                        if (script_line_splited[1] == "ela")
-                        {
-                            elastic_constant = stringtodouble(script_line_splited[2]) ;
-                        }else if (script_line_splited[1] == "pr")
-                        {
-                            poisson_ratio = stringtodouble(script_line_splited[2]) ;
-                        }
-
-                        if (elastic_constant != -1 && poisson_ratio != 0)
-                        {
-                            getDmatrix(obj.D, 2, elastic_constant, poisson_ratio) ;
-                        }
-                    }
-                }else if (script_line_splited[0] == "read")
-                {
-                    if (commandargnum == 3)
-                    {
-                        if (script_line_splited[1] == "node")
-                        {
-                            int stat ;
-                            stat = read_node(obj, script_line_splited[2]) ;
-                            if (stat == 0)
-                            {
-                                message = "All nodes are normally read." ;
-                            }else if(stat == -1){
-                                commandstate_flag = __LINE__ ;
-                                message = "Error : could not open " + script_line_splited[2] + "." ;
-                            }else
-                            {
-                                commandstate_flag = __LINE__ ;
-                                message = "Error : Some abnormality is on line " + inttostring(stat) + " in " + script_line_splited[2] + "." ;
-                            }
-                        }if (script_line_splited[1] == "element")
-                        {
-                            int stat ;
-                            stat = read_elem(obj, script_line_splited[2]) ;
-                            if (stat == 0)
-                            {
-                                message = "All elements are normally read." ;
-                            }else if(stat == -1){
-                                commandstate_flag = __LINE__ ;
-                                message = "Error : could not open " + script_line_splited[2] + "." ;
-                            }else
-                            {
-                                commandstate_flag = __LINE__ ;
-                                message = "Error : Some abnormality is on line " + inttostring(stat) + " in " + script_line_splited[2] + "." ;
-                            }
-                        }
-                    }else
-                    {
-                        commandstate_flag = __LINE__ ;
-                        message = "Error : Could not read data file." ;
-                    }
-
-                }else if (script_line_splited[0] == "force")
-                {
-                    if (commandargnum == 5) {
-                        if (script_line_splited[1] == "node") {
-                            int nodenum = stringtoint(script_line_splited[2]) ;
-                            int rownum = -1 ;
-
-                            if (script_line_splited[3] == "x") {
-                                rownum = 0 ;
-                            }else if (script_line_splited[3] == "y") {
-                                rownum = 1 ;
-                            }else if(script_line_splited[3] == "z") {
-                                rownum = 2 ;
-                            }else{
-                                commandstate_flag = __LINE__ ;
-                                message = "Error : You may miss set about force." ;
-                            }
-
-                            double force = stringtodouble(script_line_splited[4]) ;
-
-                            obj.force[(nodenum-1)*dim+rownum] = force ;
-                        }
-                    }else{
-                        commandstate_flag = __LINE__ ;
-                        message = "Error : You may miss set about force." ;
-                    }
-                }else if (script_line_splited[0] == "solve")
-                {
-                    solve(obj,dim) ;
-                }else if (script_line_splited[0] == "write")
-                {
-                    if (commandargnum == 3)
-                    {
-                        if (script_line_splited[1] == "node")
-                        {
-                            /*
-                            ifstream ifs_dat(script_line_splited[2].c_str()) ;
-                            if (ifs_dat.fail())
-                            {
-                                cerr << "Error : Could not read file. [main.cpp  "<< __LINE__ << "] \n" ;
-                            }
-                            while(getline(ifs_dat, str))
-                            {
-
-                            }
-                            */
-                            cout << "node" ;
-                        }
-                    }else
-                    {
-                        commandstate_flag = __LINE__ ;
-                        message = "Error : Could not write." ;
-                    }
-                }else if(script_line_splited[0] == "dump")
-                {
-                    int state = 0 ;
-                    if (commandargnum == 3)
-                    {
-                        if (script_line_splited[1] == "material")
-                        {
-                            state = dump(obj, script_line_splited[2]) ;
-                        }
-                    }
-                }else if(script_line_splited[0][0] == '$')
-                {
-                    script_line_splited[0].erase(script_line_splited[0].begin(),script_line_splited[0].begin()+1) ;
-                    script_line_splited[0].pop_back() ;
-                    vector<string> eq = split(str, '=') ;
-                    if (eq.size() == 2)
-                    {
-                        vars_str[ script_line_splited[0] ] = doubletostring( evalu(eq[1], vars_str)) ;
-                    }
-                }else if (script_line_splited[0][0] == '/')
-                {
-                    //check integrity commands
-                    if (commandargnum == 1)
-                    {
-                        if (script_line_splited[0] == "/SOLU") //use before solve
-                        {
-                            cout << "maybe ok...(under construction.)\n" ;
-                        }else if (script_line_splited[0] == "/PRE") //use before preprocessor
-                        {
-                            cout << "maybe ok...(under construction.)\n" ;
-                        }else if (script_line_splited[0] == "/POS") //use before postprocessor
-                        {
-                            cout << "maybe ok...(under construction.)\n" ;
+                            readscript(script_line_splited[1],"0") ;
+                            break ;
                         }else
                         {
                             commandstate_flag = __LINE__ ;
-                            message = "Error : No such check command " + script_line_splited[0] + "." ;
+                            message = "Error : in command 'load'. command with an arguments(file name)?" ;
                         }
-                    }
-                }else if (script_line == "quit" || script_line == "exit")
-                {
-                    cout << "Program will be terminated normally.\n" ;
-                    end_flag = 1 ;
+                    }if (script_line_splited[0] == "set")
+                    {
+                        if (commandargnum >= 3)
+                        {
+                            if (script_line_splited[1] == "variable")
+                            {
+                                Variable var ;
+                                var.name = script_line_splited[2] ;
+                                if (commandargnum == 4)
+                                {
+                                    var.value = script_line_splited[3] ;
+                                }
+                                vars_str.elem.push_back(var) ;
+                            }
+                        }
 
-                }else
-                {
-                    commandstate_flag = __LINE__ ;
-                    message = "Error : No such command '" + script_line_splited[0] + "'" ;
+                    }else if (script_line_splited[0] == "unit") //to define unit set.
+                    {
+                        if (commandargnum == 2)
+                        {
+                            if (script_line_splited[1] == "metal") //L:[m] T:[s] M:[kg] elastic_constant:[GPa]
+                            {
+                                obj.unit = 0 ;
+                            }
+                        }else
+                        {
+                            commandstate_flag = __LINE__ ;
+                            message = "Error : you should set parameter of unit command." ;
+                        }
+                    }else if (script_line_splited[0] == "mp") //to define material parameter
+                    {
+                        if (commandargnum == 4)
+                        {
+                            if (script_line_splited[1] == "elastic_constant")
+                            {
+                                elastic_constant = stringtodouble(script_line_splited[3]) ;
+                            }else if (script_line_splited[1] == "poisson_ratio")
+                            {
+                                poisson_ratio = stringtodouble(script_line_splited[3]) ;
+                            }else if (script_line_splited[1] == "thickness") {
+                                obj.t = stringtodouble(script_line_splited[3]) ;
+                            }
+
+                            if (elastic_constant != -1 && poisson_ratio != 0)
+                            {
+                                getDmatrix(obj, 2, elastic_constant, poisson_ratio) ;
+                            }
+                        }
+                    }else if (script_line_splited[0] == "read")
+                    {
+                        if (commandargnum == 3)
+                        {
+                            if (script_line_splited[1] == "node")
+                            {
+                                int stat ;
+                                stat = read_node(obj, script_line_splited[2]) ;
+                                if (stat == 0)
+                                {
+                                    message = "All nodes are normally read." ;
+                                }else if(stat == -1){
+                                    commandstate_flag = __LINE__ ;
+                                    message = "Error : could not open " + script_line_splited[2] + "." ;
+                                }else
+                                {
+                                    commandstate_flag = __LINE__ ;
+                                    message = "Error : Some abnormality is on line " + inttostring(stat) + " in " + script_line_splited[2] + "." ;
+                                }
+                            }if (script_line_splited[1] == "element")
+                            {
+                                int stat ;
+                                stat = read_elem(obj, script_line_splited[2]) ;
+                                if (stat == 0)
+                                {
+                                    message = "All elements are normally read." ;
+                                }else if(stat == -1){
+                                    commandstate_flag = __LINE__ ;
+                                    message = "Error : could not open " + script_line_splited[2] + "." ;
+                                }else
+                                {
+                                    commandstate_flag = __LINE__ ;
+                                    message = "Error : Some abnormality is on line " + inttostring(stat) + " in " + script_line_splited[2] + "." ;
+                                }
+                            }
+                        }else
+                        {
+                            commandstate_flag = __LINE__ ;
+                            message = "Error : Could not read data file." ;
+                        }
+
+                    }else if (script_line_splited[0] == "fix") {
+                        if (commandargnum == 3) {
+                            if (script_line_splited[2] == "pa") {
+                                obj.fixx.push_back( stringtoint(script_line_splited[1]) ) ;
+                                obj.fixy.push_back( stringtoint(script_line_splited[1]) ) ;
+                            }else if (script_line_splited[2] == "px") {
+                                obj.fixx.push_back( stringtoint(script_line_splited[1]) ) ;
+                            }else if (script_line_splited[2] == "py") {
+                                obj.fixy.push_back( stringtoint(script_line_splited[1]) ) ;
+                            }
+                        }
+                    }else if (script_line_splited[0] == "force")
+                    {
+                        if (commandargnum == 5) {
+                            if (script_line_splited[1] == "node") {
+                                int nodenum = stringtoint(script_line_splited[2]) ;
+                                int rownum = -1 ;
+
+                                if (script_line_splited[3] == "x") {
+                                    rownum = 0 ;
+                                }else if (script_line_splited[3] == "y") {
+                                    rownum = 1 ;
+                                }else if(script_line_splited[3] == "z") {
+                                    rownum = 2 ;
+                                }else{
+                                    commandstate_flag = __LINE__ ;
+                                    message = "Error : You may miss set about force." ;
+                                }
+
+                                double force = stringtodouble(script_line_splited[4]) ;
+
+                                obj.force[(nodenum-1)*dim+rownum] = force ;
+                            }
+                        }else{
+                            commandstate_flag = __LINE__ ;
+                            message = "Error : You may miss set about force." ;
+                        }
+                    }else if (script_line_splited[0] == "solve")
+                    {
+                        solve(obj,dim) ;
+                    }else if (script_line_splited[0] == "write")
+                    {
+                        if (commandargnum == 3)
+                        {
+                            if (script_line_splited[1] == "node")
+                            {
+                                /*
+                                ifstream ifs_dat(script_line_splited[2].c_str()) ;
+                                if (ifs_dat.fail())
+                                {
+                                    cerr << "Error : Could not read file. [main.cpp  "<< __LINE__ << "] \n" ;
+                                }
+                                while(getline(ifs_dat, str))
+                                {
+
+                                }
+                                */
+                                cout << "node" ;
+                            }
+                        }else
+                        {
+                            commandstate_flag = __LINE__ ;
+                            message = "Error : Could not write." ;
+                        }
+                    }else if(script_line_splited[0] == "dump")
+                    {
+                        int state = 0 ;
+                        if (commandargnum == 3)
+                        {
+                            if (script_line_splited[1] == "material")
+                            {
+                                state = dump(obj, script_line_splited[2]) ;
+                            }
+                        }
+                    }else if(script_line_splited[0][0] == '$')
+                    {
+                        script_line_splited[0].erase(script_line_splited[0].begin(),script_line_splited[0].begin()+1) ;
+                        script_line_splited[0].pop_back() ;
+                        vector<string> eq = split(str, '=') ;
+                        if (eq.size() == 2)
+                        {
+                            vars_str[ script_line_splited[0] ] = doubletostring( evalu(eq[1], vars_str)) ;
+                        }
+                    }else if (script_line_splited[0][0] == '/')
+                    {
+                        //check integrity commands
+                        if (commandargnum == 1)
+                        {
+                            if (script_line_splited[0] == "/SOLU") //use before solve
+                            {
+                                cout << "maybe ok...(under construction.)\n" ;
+                            }else if (script_line_splited[0] == "/PRE") //use before preprocessor
+                            {
+                                cout << "maybe ok...(under construction.)\n" ;
+                            }else if (script_line_splited[0] == "/POS") //use before postprocessor
+                            {
+                                cout << "maybe ok...(under construction.)\n" ;
+                            }else
+                            {
+                                commandstate_flag = __LINE__ ;
+                                message = "Error : No such check command " + script_line_splited[0] + "." ;
+                            }
+                        }
+                    }else if (script_line == "quit" || script_line == "exit")
+                    {
+                        cout << "Program will be terminated normally.\n" ;
+                        end_flag = 1 ;
+
+                    }else
+                    {
+                        commandstate_flag = __LINE__ ;
+                        message = "Error : No such command '" + script_line_splited[0] + "'" ;
+                    }
                 }
             }
             if (script_flag != 1 && end_flag != 1)
@@ -332,12 +347,12 @@ int readscript(string filename, string order){
             int variable_flag = -1 ;
             script_line_num += 1 ;
             comment_flag = str.find("!") ;
-            variable_flag = str.find("$") ;
+            //variable_flag = str.find("$") ;
             if (comment_flag >= 0)
             {
                 str.erase(str.begin()+comment_flag, str.end() ) ; //erace the part of comment
             }
-            string::size_type pos = str.find("$") ; //substitution value to the variable
+            /*string::size_type pos = str.find("$") ; //substitution value to the variable
             while(pos > 1){
                 int namesize = str.find(")", pos) - pos - 2 ;
                 string var_name = str.substr(pos+2,namesize) ;
@@ -347,7 +362,7 @@ int readscript(string filename, string order){
                 }
                 str.replace(pos, namesize+3, vars_str[var_name]) ;
                 pos = str.find("$", pos + var_name.size()) ;
-            }
+            }*/
             readscript("0", str) ;
             if (commandstate_flag != 0)
             {

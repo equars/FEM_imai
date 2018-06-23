@@ -12,14 +12,14 @@
 int solve(Material &obj, int dim){
     Matrix B,Km,Bt ; //B, K matrix.
     int elem_num = obj.elements.size() ; //the number of elements
-    int elem_type = obj.elements[0].size() ; //3 as triangle, 4 as square
+    int elem_type = obj.elements[1].size() ; //3 as triangle, 4 as square
     int node_num = obj.nodes.size() ; //the number of nodes
 
-    obj.K.Reserve(dim*node_num,dim*node_num) ; //reserve K matrix
+    obj.K.Reserve(dim*(node_num-1),dim*(node_num-1)) ; //reserve K matrix
 
     if (elem_type == 3 && dim == 2) //triangle nodes(plane)
     {
-        for (int i = 0; i < elem_num; i++)
+        for (int i = 1; i < elem_num; i++)
         {
             //make B and K matrix for each elements(init)
             B.Reserve(elem_type,dim*elem_type) ;
@@ -29,7 +29,7 @@ int solve(Material &obj, int dim){
             x2 = obj.nodes[ obj.elements[i][1] ].coord[0] ;
             y2 = obj.nodes[ obj.elements[i][1] ].coord[1] ;
             x3 = obj.nodes[ obj.elements[i][2] ].coord[0] ;
-            x3 = obj.nodes[ obj.elements[i][2] ].coord[1] ;
+            y3 = obj.nodes[ obj.elements[i][2] ].coord[1] ;
 
             //determinant of A
             double deta = x2*y3+x1*y2+x3*y1 - (x1*y3+x2*y1+x3*y2) ;
@@ -55,22 +55,53 @@ int solve(Material &obj, int dim){
             Km = Km * B ;
             for (int j = 0; j < Km.length_row ; j++)
             {
-                for (int k = 0; k < obj.K.length_column; k++)
+                for (int k = 0; k < Km.length_column; k++)
                 {
-                    Km[j][k] = Km[j][k]*obj.t*deta/2 ;
+                    double val =  Km[j][k] ;
+                    Km[j][k] = val*obj.t*deta/2 ;
                 }
             }
 
             //merge K_m matrix to K(not yet)
-            merge_Kmatrix(obj.K, Km) ;
+            merge_Kmatrix(obj, Km) ;
             //merge K_m to K(test version) (delete if maerge_Kmatrix is deploy)
-            
+            for (int j = 0; j < elem_type; j++) {
+                for (int k = 0; k < elem_type; k++) {
+                    for (int l = 0; l < dim; l++) {
+                        for (int m = 0; m < dim; m++) {
+                            obj.K[(obj.elements[i][j]-1)*dim + l][(obj.elements[i][k]-1)*dim + m] += Km[j*dim + l][k*dim + m] ;
+                        }
+                    }
+                }
+            }
         }
+        obj.K.Show() ;
+
         //boundary conditions
-        for (int i = 0; i < obj.K[0].size(); i++) {
-
+        for (int i = 0; i < obj.fixx.size(); i++) {
+            int row_del_num = (obj.fixx[i]-1)*dim ;
+            for (int j = 0; j < obj.K.length_column; j++) {
+                if (row_del_num != j) {
+                    obj.K[ row_del_num ][j] = 0 ;
+                    obj.K[j][ row_del_num ] = 0 ;
+                }else {
+                    obj.K[ row_del_num ][j] = 1 ;
+                }
+            }
+        }
+        for (int i = 0; i < obj.fixy.size(); i++) {
+            int row_del_num = (obj.fixy[i]-1)*dim+1 ;
+            for (int j = 0; j < obj.K.length_column; j++) {
+                if (row_del_num != j) {
+                    obj.K[ row_del_num ][j] = 0 ;
+                    obj.K[j][ row_del_num ] = 0 ;
+                }else {
+                    obj.K[ row_del_num ][j] = 1 ;
+                }
+            }
         }
 
+        obj.K.Show() ;
         //solve
         obj.K.Inverse() ;
         for (int i = 0; i < obj.K[0].size(); i++) {
