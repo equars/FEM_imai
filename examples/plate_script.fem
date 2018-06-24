@@ -1,0 +1,56 @@
+!test script
+!this is the comment. this become comment if is after "!" char.
+
+
+!Shape data
+read node plate_node.dat
+read element plate_elem.dat
+
+!Loads ("force line" command is not available yet)
+force node 69 y 200
+force node 70 y 400
+force node 71 y 360
+force node 101 y 290
+force node 102 y 440
+force node 103 y 610
+force node 104 y 300
+
+!Material data
+mp thickness = 1 !unit m
+mp elastic_constant = 200 !unit GPa
+mp poisson_ratio = 0.3
+
+!Boundary condition
+fix 1 py
+fix 8 py
+fix 15 py
+fix 22 py
+fix 29 py
+fix 36 py
+fix 43 py
+fix 50 py
+fix 72 py
+fix 75 py
+
+fix 7 px
+fix 14 px
+fix 21 px
+fix 28 px
+fix 35 px
+fix 42 px
+fix 49 px
+fix 56 px
+fix 57 px
+fix 60 px
+fix 63 px
+fix 66 px
+fix 69 px
+
+!check integrity
+/SOLU
+
+!solve
+solve
+
+!output
+dump material all
