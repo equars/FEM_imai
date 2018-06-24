@@ -22,14 +22,18 @@ const int dim = 2 ;//dimension
 
 //function and class prototype
 class Node ;
+class Stress ;
+class Strain ;
 
+//main class
 class Material{
     public:
         //data
         vector< vector<int> > elements ; //elements. index implay node number. values mean node numbaers.
         vector<Node> nodes ; //nodes. index implay node number. and Node class values means coordinations.
         vector< double > u ; //henni
-        vector< double > stress ; //stress
+        vector<Strain> strain_dist ; //stress. index as node num.
+        vector<Stress> stress_dist ; //stress
         Matrix D ; //Dmatrix
         Matrix K ; //Kmatrix
         vector< double > force ;
@@ -56,6 +60,28 @@ class Node{
     public:
         //data
         double coord[dim] ; //coordination
+};
+
+class Strain{
+    public:
+        //data
+        double val[(dim-1)*3] ; //varepsilon xx,yy,xy(if 2D)
+
+        //methods
+        double& operator[](int i){
+            return val[i] ;
+        }
+};
+
+class Stress{
+    public:
+        //data
+        double val[(dim-1)*3] ; //varepsilon xx,yy,xy(if 2D)
+
+        //methods
+        double& operator[](int i){
+            return val[i] ;
+        }
 };
 
 #endif

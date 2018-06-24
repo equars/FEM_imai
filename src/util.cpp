@@ -50,6 +50,7 @@ int read_node(Material &obj, string filename){
                 //allocate arrays.
                 obj.nodes.reserve(node_len+1) ;
                 obj.force.reserve(node_len*dim) ;
+                obj.u.reserve(node_len*dim) ;
                 obj.K.Reserve(node_len*dim, node_len*dim) ;
                 for (int i = 0; i < node_len+1; i++)
                 {
@@ -58,6 +59,7 @@ int read_node(Material &obj, string filename){
                     if(i != node_len){
                         for (int i = 0; i < dim; i++) {
                             obj.force.push_back(0) ;
+                            obj.u.push_back(0) ;
                         }
                     }
                 }
@@ -183,6 +185,7 @@ int dump(Material &obj, string order){
         for (int i = 0; i < obj.u.size(); i++) {
             cout << obj.u[i] << ", " ;
         }
+        cout << "\n" ;
     }
     return -1;
 }

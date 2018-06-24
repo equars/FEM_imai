@@ -1,17 +1,30 @@
 !test script
-!this is the comment. this become comment after "!" char.
+!this is the comment. this become comment if is after "!" char.
 
+
+!Shape data
 read node node.dat
 read element elem.dat
 
-force node 2 x 5000
+!Loads
+force node 3 x 5000
 force node 4 x 5000
 
+!Material data
+mp thickness = 0.1
+mp elastic_constant = 200 !unit GPa
+mp poisson_ratio = 0.3
+
+!Boundary condition
 fix 1 pa  !fix to all direction
-fix 3 px  !fix node to x direction(y and z are free if we consider 3D. )
-fix 2 py
+fix 2 px  !fix node to x direction(y and z are free if we consider 3D. )
+fix 3 py
+
+!check integrity
 /SOLU
 
+ !solve
 solve
 
+ !output
 dump material all

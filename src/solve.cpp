@@ -75,7 +75,6 @@ int solve(Material &obj, int dim){
                 }
             }
         }
-        obj.K.Show() ;
 
         //boundary conditions
         for (int i = 0; i < obj.fixx.size(); i++) {
@@ -104,11 +103,17 @@ int solve(Material &obj, int dim){
         obj.K.Show() ;
         //solve
         obj.K.Inverse() ;
-        for (int i = 0; i < obj.K[0].size(); i++) {
-            for (int j = 0; j < obj.K[0].size(); j++) {
+
+        //get displacement
+        for (int i = 0; i < obj.K.length_row; i++) {
+            for (int j = 0; j < obj.K.length_column; j++) {
                 double kval = obj.K[i][j] ;
                 obj.u[i] += kval * obj.force[j] ;
             }
+        }
+        //get stress and strain
+        for (int i = 0; i < count; i++) {
+            /* code */
         }
     }
     return 0 ;

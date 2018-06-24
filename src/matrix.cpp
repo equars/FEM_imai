@@ -66,47 +66,76 @@ int Matrix::Inverse(){
         return -1 ;
     }
     Matrix L,U,I,Linv,Uinv,t,v ;
-    t = *this ;
-    t.Lu(L,U) ;
-    I.Reserve(length_row, length_column) ; //make unit matrix to get inverse of L and U
-    for(int i=0;i<length_row;i++)
-    {
-        I.cell[i][i] = 1 ;
-    }
-    L = L|I ; // combine
-    U = U|I ; // combine
-    for(int i=0;i<length_row;i++)
-    {
-        int pivot_L = L[i][i] ; //pivot of matrix L
-        for(int j=i;j<length_column_exp;j++)
+
+    t.cell = this->cell ;
+    t.length_row = this->length_row ;
+    t.length_column = this->length_column ;
+    if(t.Lu(L,U) == 0 ){
+        I.Reserve(length_row, length_column) ; //make unit matrix to get inverse of L and U
+        for(int i=0;i<length_row;i++)
         {
-            L[i][j] = L[i][j]/pivot_L ; //row normalize for head is 1
+            I.cell[i][i] = 1 ;
         }
-        for(int j=i+1;j<length_row;j++)
+        L = L|I ; // combine
+        U = U|I ; // combine
+        for(int i=0;i<length_row;i++)
         {
-            int head_L = L[j][i] ; //head column of this term about matrix L
-            int head_U = U[length_row-1-j][length_column-1-i] ; //head column of this term about matrix U
-            L[j][i] = 0 ;
-            U[length_row-1-j][length_column-1-i] = 0 ;
-            for(int k=i+1;k<length_column_exp;k++)
+            int pivot_L = L[i][i] ; //pivot of matrix L
+            for(int j=i;j<length_column_exp;j++)
             {
-                L[j][k] = L.cell[j][k]-L[i][k]*head_L ;
-                U[length_row-1-j][k] = U[length_row-1-j][k]-U[length_row-1-i][k]*head_U ;
+                L[i][j] = L[i][j]/pivot_L ; //row normalize for head is 1
+            }
+            for(int j=i+1;j<length_row;j++)
+            {
+                int head_L = L[j][i] ; //head column of this term about matrix L
+                int head_U = U[length_row-1-j][length_column-1-i] ; //head column of this term about matrix U
+                L[j][i] = 0 ;
+                U[length_row-1-j][length_column-1-i] = 0 ;
+                for(int k=i+1;k<length_column_exp;k++)
+                {
+                    L[j][k] = L.cell[j][k]-L[i][k]*head_L ;
+                    U[length_row-1-j][k] = U[length_row-1-j][k]-U[length_row-1-i][k]*head_U ;
+                }
             }
         }
-    }
-    Linv.Reserve(length_row, length_column) ;
-    Uinv.Reserve(length_row, length_column) ;
-    for(int i=0;i< length_row;i++)
-    {
-        for(int j=0;j< length_column;j++)
+        Linv.Reserve(length_row, length_column) ;
+        Uinv.Reserve(length_row, length_column) ;
+        for(int i=0;i< length_row;i++)
         {
-            Linv[i][j] = L[i][j+length_column] ;
-            Uinv[i][j] = U[i][j+length_column] ;
+            for(int j=0;j< length_column;j++)
+            {
+                Linv[i][j] = L[i][j+length_column] ;
+                Uinv[i][j] = U[i][j+length_column] ;
+            }
         }
+        v = Uinv*Linv ;
+        this->cell = v.cell ;
+    }else{
+        I.Reserve(length_row, length_column) ;
+        for(int i=0;i<length_row;i++)
+        {
+            I[i][i] = 1 ;
+        }
+        t = t|I ;
+
+        cout << t.length_row << " " << t.length_column ;
+
+        for (int i = 0; i < t.length_row; i++) {
+            for (int j = 0; j < t.length_column; j++) {
+                t[i][j] = t[i][j]/t[i][i] ;
+            }
+            for (int j = i+1; j < t.length_row; j++) {
+                double piv = t[j][i] ;
+                for (int k = 0; k < t.length_column; k++) {
+                    t[j][k] = t[j][k] - t[i][k]*piv ;
+                }
+            }
+        }
+        for (int i = length_row - 1 ; i >= 0; i--) {
+
+        }
+        t.Show() ;
     }
-    v = Uinv*Linv ;
-    this->cell = v.cell ;
     return 0 ;
 }
 
@@ -143,62 +172,54 @@ int Matrix::Show(){
     return 0 ;
 }
 
-int Matrix::Lu(Matrix &L, Matrix &U){
-    int m ;
-    Matrix green,l,u,lu ; //green named because from "http://www.ced.is.utsunomiya-u.ac.jp/lecture/2011/prog/p2/kadai3/no3/lu.pdf"
-    double orange ;
-    m = length_row ;
-    if (m != cell[0].size())
-    {
-        cout << "Error : LU, size is different from row and column. [matrix.cpp " << __LINE__ << "]\n" ;
-        return -1 ;
-    }
-    L.Reserve(m,m) ;
-    U.Reserve(m,m) ;
+int Matrix::Lu(Matrix &L, Matrix &U)
+{
+    Matrix A;
+    A = *this ;
+    int n = length_row ;
+    L.Reserve(n,n) ;
+    U.Reserve(n,n) ;
 
-    lu = *this ; //init lu
-    for (int i = 0; i < m; i++)
-    {
-        U.cell[i][i] = 1 ;
+    if(n <= 0){
+        return 0 ;
     }
 
-    for (int i = 0; i < m; i++)
-    {
-        green.Reserve(m-i-1,m-i-1) ;
-        l.Reserve(m-i-1,1) ;
-        u.Reserve(1,m-i-1) ;
-        L.cell[i][i]=lu.cell[0][0] ;
-        if (L.cell[i][i] == 0)
-        {
-            cout << "Error : LU,Could not calculate. [matrix.cpp " << __LINE__ << "]\n" ;
-            return -1 ;
+    for(int i = 0; i < n; ++i){
+        // L
+        for(int j = 0; j <= i; ++j){
+            double lu = A[i][j];
+            for(int k = 0; k < j; ++k){
+                lu -= A[i][k]*A[k][j];    // l_ik * u_kj
+            }
+            A[i][j] = lu;
         }
-        for (int j = 0; j < m-i; j++)
-        {
-            for (int k = 0; k < m-i; k++)
-            {
-                if (j >= 1 && k >= 1)
-                {
-                    green.cell[j-1][k-1] = lu.cell[j][k] ;
-                }else if (j == 0 && k >= 1)
-                {
-                    u.cell[0][k-1] = lu.cell[0][k]/lu.cell[0][0] ;
-                    U.cell[i][k+i] = lu.cell[0][k]/lu.cell[0][0] ;
-                }else if (k == 0 && j >= 1)
-                {
-                    l.cell[j-1][0] = lu.cell[j][0] ;
-                    L.cell[i+j][i] = lu.cell[j][0] ;
-                }
+
+        // U
+        for(int j = i+1; j < n; ++j){
+            double lu = A[i][j];
+            for(int k = 0; k < i; ++k){
+                lu -= A[i][k]*A[k][j];    // l_ik * u_kj
+            }
+            if (A[i][i] == 0) {
+                return -1 ;
+            }
+            A[i][j] = lu/A[i][i];
+        }
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (i > j) {
+                L[i][j] = A[i][j] ;
+            }else if (i == j) {
+                L[i][i] = A[i][i] ;
+                U[i][i] = 1 ;
+            }else{
+                U[i][j] = A[i][j] ;
             }
         }
-        if (i!=m-1)
-        {
-            lu.Reserve(m-i-1,m-i-1) ;
-            lu = l * u ;
-            lu = green - lu ;
-        }
     }
-    return 0 ;
+
+    return 0;
 }
 
 double Matrix::Det(){
@@ -357,7 +378,7 @@ Matrix Matrix::operator|(const Matrix& x) {
             v[i].push_back(x.cell[i][j]) ;
         }
     }
-    this->length_column = this->length_column + x.length_column ;
+    v.length_column = this->length_column + x.length_column ;
     return v ;
 }
 
