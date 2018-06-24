@@ -7,24 +7,24 @@ read node node.dat
 read element elem.dat
 
 !Loads
-force node 3 x 5000
-force node 4 x 5000
+force node 8 x 10 !unit MN
+force node 7 x 10
 
 !Material data
-mp thickness = 0.1
+mp thickness = 0.1 !unit m
 mp elastic_constant = 200 !unit GPa
 mp poisson_ratio = 0.3
 
 !Boundary condition
-fix 1 pa  !fix to all direction
+fix 1 pa  !fix node to all direction
 fix 2 px  !fix node to x direction(y and z are free if we consider 3D. )
-fix 3 py
+
 
 !check integrity
 /SOLU
 
- !solve
+!solve
 solve
 
- !output
+!output
 dump material all

@@ -80,15 +80,15 @@ int Matrix::Inverse(){
         U = U|I ; // combine
         for(int i=0;i<length_row;i++)
         {
-            int pivot_L = L[i][i] ; //pivot of matrix L
+            double pivot_L = L[i][i] ; //pivot of matrix L
             for(int j=i;j<length_column_exp;j++)
             {
                 L[i][j] = L[i][j]/pivot_L ; //row normalize for head is 1
             }
             for(int j=i+1;j<length_row;j++)
             {
-                int head_L = L[j][i] ; //head column of this term about matrix L
-                int head_U = U[length_row-1-j][length_column-1-i] ; //head column of this term about matrix U
+                double head_L = L[j][i] ; //head column of this term about matrix L
+                double head_U = U[length_row-1-j][length_column-1-i] ; //head column of this term about matrix U
                 L[j][i] = 0 ;
                 U[length_row-1-j][length_column-1-i] = 0 ;
                 for(int k=i+1;k<length_column_exp;k++)
@@ -111,6 +111,7 @@ int Matrix::Inverse(){
         v = Uinv*Linv ;
         this->cell = v.cell ;
     }else{
+        cout << "with no LU" << "\n" ;
         I.Reserve(length_row, length_column) ;
         for(int i=0;i<length_row;i++)
         {

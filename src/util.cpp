@@ -173,17 +173,43 @@ int dump(Material &obj, string order){
             }
             cout << "\n" ;
         }
+
+        cout << "\n" ;
         cout << "dump data of elements ->\nelement num, [nodes]\n" ;
-        for (int i = 1; i < obj.elements.size(); i++) {
+        for (int i = 0; i < obj.elements.size(); i++) {
             cout << i << " " ;
             for (int j = 0; j < obj.elements[1].size(); j++) {
                 cout << obj.elements[i][j] << " " ;
             }
             cout << "\n" ;
         }
+
+        cout << "\n" ;
         cout << "dump data of displacement ->\n" ;
         for (int i = 0; i < obj.u.size(); i++) {
             cout << obj.u[i] << ", " ;
+        }
+        cout << "\n" ;
+
+        cout << "\n" ;
+        cout << "dump data of strain ->\n" ;
+        for (int i = 0; i < obj.strain_dist.size(); i++) {
+            cout << i+1 << " : " ;
+            for (int j = 0; j < (dim-1)*3 ; j++) {
+                std::cout << obj.strain_dist[i][j][0] << ',';
+            }
+            cout << "\n" ;
+        }
+        cout << "\n" ;
+
+        cout << "\n" ;
+        cout << "dump data of stress ->\n" ;
+        for (int i = 0; i < obj.stress_dist.size(); i++) {
+            cout << i+1 << " : " ;
+            for (int j = 0; j < (dim-1)*3 ; j++) {
+                std::cout << obj.stress_dist[i][j][0] << ',';
+            }
+            cout << "\n" ;
         }
         cout << "\n" ;
     }

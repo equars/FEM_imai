@@ -32,10 +32,11 @@ class Material{
         vector< vector<int> > elements ; //elements. index implay node number. values mean node numbaers.
         vector<Node> nodes ; //nodes. index implay node number. and Node class values means coordinations.
         vector< double > u ; //henni
-        vector<Strain> strain_dist ; //stress. index as node num.
-        vector<Stress> stress_dist ; //stress
+        vector<Matrix> strain_dist ; //strain. index as node num.
+        vector<Matrix> stress_dist ; //stress
         Matrix D ; //Dmatrix
         Matrix K ; //Kmatrix
+        Matrix B ;
         vector< double > force ;
         double t ; //thickness of material
         vector< int > fixx ;
@@ -60,28 +61,6 @@ class Node{
     public:
         //data
         double coord[dim] ; //coordination
-};
-
-class Strain{
-    public:
-        //data
-        double val[(dim-1)*3] ; //varepsilon xx,yy,xy(if 2D)
-
-        //methods
-        double& operator[](int i){
-            return val[i] ;
-        }
-};
-
-class Stress{
-    public:
-        //data
-        double val[(dim-1)*3] ; //varepsilon xx,yy,xy(if 2D)
-
-        //methods
-        double& operator[](int i){
-            return val[i] ;
-        }
 };
 
 #endif
