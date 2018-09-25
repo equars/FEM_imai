@@ -1,5 +1,5 @@
 !test script
-!this is the comment. this become comment if is after "!" char.
+!this is the comment. words become comment if are after "!" char.
 
 
 !Shape data
@@ -21,7 +21,7 @@ mp elastic_constant = 200 !unit GPa
 mp poisson_ratio = 0.3
 
 !Boundary condition
-fix 1 py
+fix 1 py !fix node(point) 1 for y direction
 fix 8 py
 fix 15 py
 fix 22 py
