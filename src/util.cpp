@@ -254,8 +254,8 @@ int export_vtk(Material &obj, string filename){
     }
 
     //write stress
-    outputfile<<"\nPOINT_DATA "<< elems_len-1<<"\n";
-    outputfile<<"SCALARS Mises_stress float\nLOOKUP_TABLE default\n";
+    outputfile<<"\nCELL_DATA "<< elems_len-1<<"\n";
+    outputfile<<"SCALARS Element_Mises float\nLOOKUP_TABLE default\n";
     for(int i=0;i<elems_len-1;i++){
         mises = pow(obj.stress_dist[i][0][0],2.0)+pow(obj.stress_dist[i][1][1],2.0);
         mises = mises + pow(obj.stress_dist[i][0][0]-obj.stress_dist[i][1][1],2.0);

@@ -21,6 +21,7 @@ int solve(Material &obj, int dim){
     {
         for (int i = 1; i < elem_num; i++)
         {
+                cout<<"koko!"<<i<<"\n";
             //make B and K matrix for each elements(init)
             B.Reserve(elem_type,dim*elem_type) ;
             double x1,y1,x2,y2,x3,y3 ; //get coordination of elements

@@ -3,8 +3,8 @@
 
 
 !Shape data
-read node plate_node.dat
-read element plate_elem.dat
+read node d_plate_node.dat
+read element d_plate_elem.dat
 
 !Loads ("force line" command is not available yet)
 force node 69 y 200
