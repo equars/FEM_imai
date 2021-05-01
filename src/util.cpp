@@ -216,6 +216,54 @@ int dump(Material &obj, string order){
     return -1;
 }
 
+int export_vtk(Material &obj, string filename){
+    int nodes_len = obj.nodes.size();
+    int node_len = 2; //as dimension.
+    int elems_len = obj.elements.size();
+    int elem_len = obj.elements[1].size();
+    double mises ;
+    ofstream outputfile(filename);
+    outputfile<<"# vtk DataFile Version 4.1\nFEM_imai output vtk.\n";
+    outputfile<<"ASCII\nDATASET UNSTRUCTURED_GRID\n\n";
+
+    //write nodes
+    outputfile<<"POINTS "<<nodes_len-1<<" float\n";
+    for (int i = 1; i<nodes_len;i++){
+        for (int j = 0; j<node_len;j++){
+            outputfile<<fixed << setprecision(8)<<obj.nodes[i].coord[j]<<" ";
+        }
+        outputfile<<"0.0\n";
+    }
+
+    //write elems
+    outputfile<<"\nCELLS "<<elems_len-1<<" " ;
+    if (elem_len==3){ //2d3n elements
+        outputfile<<(elems_len-1)*(elem_len+1)<<"\n" ;
+        for (int i = 1; i<elems_len;i++){
+            outputfile<<elem_len<<" " ;
+            outputfile<<obj.elements[i][0]-1<<" " ;
+            outputfile<<obj.elements[i][1]-1<<" " ;
+            outputfile<<obj.elements[i][2]-1<<"\n" ;
+        }
+    }
+    outputfile<<"\nCELL_TYPES "<<elems_len-1<<"\n" ;
+    if (elem_len==3){ //2d3n elements
+        for (int i = 1; i<elems_len;i++){
+            outputfile<<"5\n" ;
+        }
+    }
+
+    //write stress
+    outputfile<<"\nPOINT_DATA "<< elems_len-1<<"\n";
+    outputfile<<"SCALARS Mises_stress float\nLOOKUP_TABLE default\n";
+    for(int i=0;i<elems_len-1;i++){
+        mises = pow(obj.stress_dist[i][0][0],2.0)+pow(obj.stress_dist[i][1][1],2.0);
+        mises = mises + pow(obj.stress_dist[i][0][0]-obj.stress_dist[i][1][1],2.0);
+        mises = sqrt(mises);
+        outputfile<<mises<<"\n";
+    }
+}
+
 double stringtodouble(string str){
     double ret;
     stringstream ss;

@@ -24,6 +24,7 @@ vector<string> split(const string &str, char sep) ; //the function that splits w
 vector<string> data_split(const string &str,char sep) ; //the function that splits words and delete empty data.
 double evalu(string &equ , Vars &vars) ; //evaluation of equation that is string type.
 int dump(Material &obj, string order) ;
+int export_vtk(Material &obj, string filename) ;
 double stringtodouble(string str) ;
 int stringtoint(string str) ;
 string inttostring(int number) ;

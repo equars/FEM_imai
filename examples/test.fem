@@ -28,3 +28,4 @@ solve
 
 !output
 dump material all
+export vtk out.vtk

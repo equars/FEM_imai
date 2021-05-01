@@ -75,7 +75,8 @@ int readscript(string filename, string order){
     string str ; //get line from script file
     vector<string> script_line_splited ;
     int commandargnum = 0 ; //number of command argment.
-    int end_flag = 0 ; //break while
+    int end_flag = 0 ; //break whilei
+    string errc ;
 
     //----terminal(prompt) mode---
     if (filename == "0")
@@ -86,7 +87,7 @@ int readscript(string filename, string order){
             if (order == "0")
             {
                 cout << "FEM> " ;
-                fgets(script_line_c, sizeof(script_line_c), stdin) ;
+                errc = fgets(script_line_c, sizeof(script_line_c), stdin) ;
                 script_line_c[strlen(script_line_c)-1] = '\0' ;
                 script_line = string(script_line_c) ; //convert char to string
             }else
@@ -275,6 +276,17 @@ int readscript(string filename, string order){
                             {
                                 state = dump(obj, script_line_splited[2]) ;
                             }
+                        }
+                    }else if(script_line_splited[0] == "export")
+                    {
+                        int state = 0 ;
+                        if(commandargnum == 3){
+                            if (script_line_splited[1] == "vtk"){
+                                state = export_vtk(obj, script_line_splited[2]) ;
+                            }
+                        }else{
+                            commandstate_flag = __LINE__ ;
+                            message = "Error : Command line error." ;
                         }
                     }else if(script_line_splited[0][0] == '$')
                     {

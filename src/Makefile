@@ -1,10 +1,10 @@
 # --------make file------
 SHELL = /bin/bash
 # --------setting--------
-CXX = g++
-TARGET = FEM.exe
-CXXFLAGS = -O2
-SRCS = main.cpp matrix.cpp material.cpp util.cpp core.cpp variable.cpp solve.cpp
+CXX := g++
+TARGET := FEM.exe
+CXXFLAGS := -O2 -std=c++11
+SRCS := main.cpp matrix.cpp material.cpp util.cpp core.cpp variable.cpp solve.cpp
 OBJS := $(SRCS:.cpp=.o) #SRCS .cpp -> .o
 
 # --------compile--------
@@ -12,7 +12,7 @@ $(TARGET): $(OBJS)
 	$(CXX) -o $@ $(OBJS)
 
 %.o:%.cpp
-	$(CXX) $(SRCS) -c $<
+	$(CXX) $(CXXFLAGS) $(SRCS) -c $<
 
 # --------clean----------
 clean:
