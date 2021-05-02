@@ -31,7 +31,7 @@ class Material{
         //data
         vector< vector<int> > elements ; //elements. index implay node number. values mean node numbaers.
         vector<Node> nodes ; //nodes. index implay node number. and Node class values means coordinations.
-        vector< double > u ; //henni
+        vector< double > u ; //henni(x1,y1,x2,y2,x3,y3...xn,yn)
         vector<Matrix> strain_dist ; //strain. index as node num.
         vector<Matrix> stress_dist ; //stress
         Matrix D ; //Dmatrix

@@ -221,7 +221,9 @@ int export_vtk(Material &obj, string filename){
     int node_len = 2; //as dimension.
     int elems_len = obj.elements.size();
     int elem_len = obj.elements[1].size();
+    vector<Matrix> nodal_stress;
     double mises ;
+
     ofstream outputfile(filename);
     outputfile<<"# vtk DataFile Version 4.1\nFEM_imai output vtk.\n";
     outputfile<<"ASCII\nDATASET UNSTRUCTURED_GRID\n\n";
@@ -257,11 +259,31 @@ int export_vtk(Material &obj, string filename){
     outputfile<<"\nCELL_DATA "<< elems_len-1<<"\n";
     outputfile<<"SCALARS Element_Mises float\nLOOKUP_TABLE default\n";
     for(int i=0;i<elems_len-1;i++){
-        mises = pow(obj.stress_dist[i][0][0],2.0)+pow(obj.stress_dist[i][1][1],2.0);
-        mises = mises + pow(obj.stress_dist[i][0][0]-obj.stress_dist[i][1][1],2.0);
+        mises = pow(obj.stress_dist[i][0][0],2.0)+pow(obj.stress_dist[i][1][0],2.0);
+        mises = mises + pow(obj.stress_dist[i][0][0]-obj.stress_dist[i][1][0],2.0);
         mises = sqrt(mises);
         outputfile<<mises<<"\n";
     }
+    //write displacement
+    /*outputfile<<"\nCELL_DATA "<< elems_len-1<<"\n";
+    outputfile<<"SCALARS Element_displacement float\nLOOKUP_TABLE default\n";
+    int j = 0;
+    for(int i=0;i<elems_len-1;i++){
+        outputfile<<obj.u[j]<<"\n";
+        j++;
+    }*/
+}
+
+int vec_find_int(std::vector<int> vec, int number) {
+    int flag =0;
+    for (int i = 0; i < vec.size(); i++)
+    {
+        if(vec[i]==number){
+            flag = 1;
+            break;
+        }
+    }
+    return flag;
 }
 
 double stringtodouble(string str){

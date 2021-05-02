@@ -358,6 +358,20 @@ Matrix Matrix::operator*(const Matrix& x){
     return v ;
 }
 
+Matrix Matrix::operator/(int x){
+    Matrix v ;
+    for (int i = 0; i < cell.size(); i++)
+    {
+        for (int j = 0; j < cell[0].size(); j++)
+        {
+            v.cell[i][j]=cell[i][j]/x ;
+        }
+    }
+    v.length_row = length_row ;
+    v.length_column = length_column ;
+    return v ;
+}
+
 Matrix Matrix::operator|(const Matrix& x) {
     Matrix v ;
     int l = 0, m = 0 ; //number of lines, this and x

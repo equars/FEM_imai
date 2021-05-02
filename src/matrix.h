@@ -40,6 +40,7 @@ class Matrix{
         Matrix operator+(const Matrix& x) ;
         Matrix operator-(const Matrix& x) ;
         Matrix operator*(const Matrix& x) ; //define multiplication.
+        Matrix operator/(int x) ; 
         Matrix operator|(const Matrix& x) ; //define combine Matrix(side with side)
         double& operator()(int i,int j) ; //reference by index i,j but deprecated. or use symmmetric マトリックスにかっこで添え字を二つ指定するだけで成分が参照できる．ただしエディタ上で行列オブジェクトが関数と認識されてわかりにくいので非推奨．ただし対称行列のメモリセーブ機能を用いる場合はこれを用いる．
         vector< double >& operator[](int i) ; //matrix element can be derived by define index by [] operators.
