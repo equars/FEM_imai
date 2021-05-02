@@ -223,6 +223,7 @@ int export_vtk(Material &obj, string filename){
     int elem_len = obj.elements[1].size();
     vector<Matrix> nodal_stress;
     double mises ;
+    int j= 0;
 
     ofstream outputfile(filename);
     outputfile<<"# vtk DataFile Version 4.1\nFEM_imai output vtk.\n";
@@ -255,23 +256,52 @@ int export_vtk(Material &obj, string filename){
         }
     }
 
-    //write stress
+    //write stress strain
     outputfile<<"\nCELL_DATA "<< elems_len-1<<"\n";
-    outputfile<<"SCALARS Element_Mises float\nLOOKUP_TABLE default\n";
+    outputfile<<"SCALARS Element_Mises_Stress float\nLOOKUP_TABLE default\n";
     for(int i=0;i<elems_len-1;i++){
         mises = pow(obj.stress_dist[i][0][0],2.0)+pow(obj.stress_dist[i][1][0],2.0);
         mises = mises + pow(obj.stress_dist[i][0][0]-obj.stress_dist[i][1][0],2.0);
         mises = sqrt(mises);
         outputfile<<mises<<"\n";
     }
-    //write displacement
-    /*outputfile<<"\nCELL_DATA "<< elems_len-1<<"\n";
-    outputfile<<"SCALARS Element_displacement float\nLOOKUP_TABLE default\n";
-    int j = 0;
+
+    outputfile<<"\nSCALARS Element_Mises_Strain float\nLOOKUP_TABLE default\n";
     for(int i=0;i<elems_len-1;i++){
-        outputfile<<obj.u[j]<<"\n";
+        mises = pow(obj.strain_dist[i][0][0],2.0)+pow(obj.strain_dist[i][1][0],2.0);
+        mises = mises + pow(obj.strain_dist[i][0][0]-obj.strain_dist[i][1][0],2.0);
+        mises = sqrt(mises);
+        outputfile<<mises<<"\n";
+    }
+
+    outputfile<<"\nVECTORS Element_Stress float\n";
+    j = 0;
+    for(int i=0;i<elems_len-1;i++){
+        outputfile<<obj.stress_dist[i][0][0]<<" ";
         j++;
-    }*/
+        outputfile<<obj.stress_dist[i][1][0]<<" 0\n";
+        j++;
+    }
+
+    outputfile<<"\nVECTORS Element_Strain float\n";
+    j = 0;
+    for(int i=0;i<elems_len-1;i++){
+        outputfile<<obj.strain_dist[i][0][0]<<" ";
+        j++;
+        outputfile<<obj.strain_dist[i][1][0]<<" 0\n";
+        j++;
+    }
+
+    //write displacement
+    outputfile<<"\nPOINT_DATA "<< nodes_len-1<<"\n";
+    outputfile<<"VECTORS Nodal_Displacement float\n";
+    j = 0;
+    for(int i=0;i<nodes_len-1;i++){
+        outputfile<<obj.u[j]<<" ";
+        j++;
+        outputfile<<obj.u[j]<<" 0\n";
+        j++;
+    }
 }
 
 int vec_find_int(std::vector<int> vec, int number) {
